@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import "./board.css";
 import Square from "./square";
 import { getRandomRowCol, getGrid } from "./util";
-import { cst, snakes_tail } from "./consts";
+import { cst, snakes_tail, arrowKey } from "./consts";
 
 const { ROWS, COLS, INSECT, DEFAULT_SNAKE_LENGTH, MOVE_TIME_INTERVAL } = cst;
+const { LEFT, UP, RIGHT, DOWN } = arrowKey;
 const SNAKES_TAIL_X = snakes_tail.x;
 const SNAKES_TAIL_Y = snakes_tail.y;
 
@@ -14,6 +15,7 @@ class Board extends Component {
     insectRow: 0,
     insectCol: 0,
     snakeCoordinates: [],
+    default_direction: RIGHT,
   };
 
   isInsectOnSnake(snakeCoords, row, col) {
@@ -24,6 +26,15 @@ class Board extends Component {
     }
     return false;
   }
+
+  // changeDirection(event) {
+  //   console.log("key pressed is ", event.keyCode);
+
+  //   if (event.keyCode === UP) console.log("Pressed UP");
+  //   else if (event.keyCode === LEFT) console.log("Pressed LEFT");
+  //   else if (event.keyCode === DOWN) console.log("Pressed DOWN");
+  //   else if (event.keyCode === RIGHT) console.log("Pressed RIGHT");
+  // }
 
   moveSnake() {
     const snakeCo = [...this.state.snakeCoordinates];
@@ -83,9 +94,12 @@ class Board extends Component {
   }
 
   render() {
-    console.log("entering render");
+    // const element = document.getElementsByTagName("html");
+    // console.log(element);
+    // element.addEventListener("keydown", this.changeDirection);
+    // console.log("entering render");
     const { grid } = this.state;
-    console.log(this.state);
+    //console.log(this.state);
     // console.log("render ", this.state.insectRow, " -- ", this.state.insectCol);
     return (
       <div className="grid">
@@ -97,6 +111,8 @@ class Board extends Component {
                   <Square
                     key={`${rowIdx} ${colIdx}`}
                     value={grid[rowIdx][colIdx]}
+                    // onkeypress={this.changeDirection}
+                    // tabIndex="0"
                   ></Square>
                 );
               })}
