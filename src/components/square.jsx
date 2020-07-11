@@ -3,7 +3,8 @@ import "./square.css";
 class Square extends Component {
   render() {
     let squareClasses = "square ";
-    if (this.props.value) squareClasses += "insect ";
+    if (this.props.value === "I") squareClasses += "insect ";
+    else if (this.props.value === "S") squareClasses += "snake ";
 
     return <div className={squareClasses}></div>;
   }
