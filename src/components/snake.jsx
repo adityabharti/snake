@@ -14,7 +14,7 @@ class Snake extends Component {
       const temp_row = [];
       for (let col = 0; col < cst.COLS; col++) {
         const currSqr = {
-          value: ".",
+          value: "",
         };
         temp_row.push(currSqr);
       }
@@ -29,18 +29,14 @@ class Snake extends Component {
 
   render() {
     const { grid } = this.state;
+    console.log(grid);
     return (
       <div className="grid">
         {grid.map((row, rowIdx) => {
           return (
             <div key={rowIdx}>
               {row.map((col, colIdx) => {
-                return (
-                  <Square
-                    key={`${rowIdx} ${colIdx}`}
-                    value={this.state.value}
-                  ></Square>
-                );
+                return <Square key={`${rowIdx} ${colIdx}`} value={""}></Square>;
               })}
             </div>
           );
