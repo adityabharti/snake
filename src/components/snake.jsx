@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./snake.css";
 import Square from "./square";
+import { cst } from "./consts";
 
 class Snake extends Component {
   state = {
@@ -9,9 +10,9 @@ class Snake extends Component {
 
   componentDidMount() {
     const grid = [];
-    for (let row = 0; row < 5; row++) {
+    for (let row = 0; row < cst.ROWS; row++) {
       const temp_row = [];
-      for (let col = 0; col < 5; col++) {
+      for (let col = 0; col < cst.COLS; col++) {
         const currSqr = {
           value: ".",
         };
