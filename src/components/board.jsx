@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import "./snake.css";
+import "./board.css";
 import Square from "./square";
 import { getRandomRowCol } from "./util";
 import { cst } from "./consts";
 
-class Snake extends Component {
+class Board extends Component {
   state = {
     grid: [],
   };
@@ -21,13 +21,8 @@ class Snake extends Component {
       }
       grid.push(temp_row);
     }
-    // console.log("Inside comp did mount");
-    // console.log(grid);
-    // console.log("\n");
-    const [randomRow, randomCol] = getRandomRowCol();
-    console.log(randomRow);
-    console.log(randomCol);
 
+    const [randomRow, randomCol] = getRandomRowCol();
     grid[randomRow][randomCol].value = cst.INSECT;
     this.setState({ grid });
   }
@@ -56,4 +51,4 @@ class Snake extends Component {
   }
 }
 
-export default Snake;
+export default Board;
