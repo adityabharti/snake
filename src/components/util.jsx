@@ -10,10 +10,7 @@ export const getGrid = () => {
   for (let row = 0; row < ROWS; row++) {
     const temp_row = [];
     for (let col = 0; col < COLS; col++) {
-      const currSqr = {
-        value: "",
-      };
-      temp_row.push(currSqr);
+      temp_row.push("");
     }
     grid.push(temp_row);
   }

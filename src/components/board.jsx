@@ -4,7 +4,7 @@ import Square from "./square";
 import { getRandomRowCol, getGrid } from "./util";
 import { cst, snakes_tail } from "./consts";
 
-const { INSECT, DEFAULT_SNAKE_LENGTH } = cst;
+const { ROWS, COLS, INSECT, DEFAULT_SNAKE_LENGTH, MOVE_TIME_INTERVAL } = cst;
 const SNAKES_TAIL_X = snakes_tail.x;
 const SNAKES_TAIL_Y = snakes_tail.y;
 
@@ -13,7 +13,6 @@ class Board extends Component {
     grid: [],
     insectRow: 0,
     insectCol: 0,
-    value: "",
     snakeCoordinates: [],
   };
 
@@ -27,8 +26,20 @@ class Board extends Component {
   }
 
   moveSnake() {
-    console.log("Inside moveSnake method, ", this.state.snakeCoordinates);
-    return;
+    const snakeCo = [...this.state.snakeCoordinates];
+    const griddy = [...this.state.grid];
+
+    for (let i = 0; i < snakeCo.length; i++) {
+      griddy[snakeCo[i][0]][snakeCo[i][1]] = "";
+    }
+
+    for (let i = 0; i < snakeCo.length; i++) {
+      if (snakeCo[i][1] < COLS - 1) snakeCo[i][1] += 1;
+      else snakeCo[i][1] = 0;
+      griddy[snakeCo[i][0]][snakeCo[i][1]] = "S";
+    }
+
+    this.setState({ grid: griddy, snakeCoordinates: snakeCo });
   }
 
   componentDidMount() {
@@ -42,7 +53,7 @@ class Board extends Component {
     const snakeCoordinates = [];
 
     for (let i = 0; i < DEFAULT_SNAKE_LENGTH; i++) {
-      grid[SNAKES_TAIL_X][SNAKES_TAIL_Y + i].value = "S";
+      grid[SNAKES_TAIL_X][SNAKES_TAIL_Y + i] = "S";
       snakeCoordinates.push([SNAKES_TAIL_X, SNAKES_TAIL_Y + i]);
     }
 
@@ -53,7 +64,7 @@ class Board extends Component {
     while (this.isInsectOnSnake(snakeCoordinates, randomRow, randomCol)) {
       [randomRow, randomCol] = getRandomRowCol();
     }
-    grid[randomRow][randomCol].value = INSECT;
+    grid[randomRow][randomCol] = INSECT;
 
     // Finally set the state
     this.setState({
@@ -63,7 +74,7 @@ class Board extends Component {
       snakeCoordinates: snakeCoordinates,
     });
 
-    //this.interval = setInterval(() => this.moveSnake(), 500);
+    this.interval = setInterval(() => this.moveSnake(), MOVE_TIME_INTERVAL);
     console.log("exiting didMount");
   }
 
@@ -85,7 +96,7 @@ class Board extends Component {
                 return (
                   <Square
                     key={`${rowIdx} ${colIdx}`}
-                    value={grid[rowIdx][colIdx].value}
+                    value={grid[rowIdx][colIdx]}
                   ></Square>
                 );
               })}
