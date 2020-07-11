@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import "./square.css";
 class Square extends Component {
   render() {
-    //console.log(this.props.children);
-    return <div className="square">{this.props.value}</div>;
+    let squareClasses = "square ";
+    if (this.props.value) squareClasses += "insect ";
+
+    return <div className={squareClasses}></div>;
   }
 }
 

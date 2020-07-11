@@ -1,4 +1,5 @@
 export const cst = {
-  ROWS: 5,
-  COLS: 6,
+  ROWS: 15,
+  COLS: 30,
+  INSECT: "O",
 };

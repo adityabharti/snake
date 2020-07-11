@@ -5,7 +5,7 @@ import Snake from "./components/snake";
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <div>
         <Snake></Snake>
       </div>
     );
