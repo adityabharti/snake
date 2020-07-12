@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./board.css";
 import Square from "./square";
-import { getRandomRowCol, getGrid } from "./util";
+import { getRandomRowCol, getGrid, isSnakeHeadOnBody } from "./util";
 import { cst, snakes_tail, arrowKey } from "./consts";
 
 const { ROWS, COLS, INSECT, SNAKE_LENGTH, MOVE_TIME_INTERVAL } = cst;
@@ -17,6 +17,8 @@ class Board extends Component {
     snakeCoordinates: [],
     prev_direction: RIGHT,
     direction: RIGHT,
+    snake_length: SNAKE_LENGTH,
+    highScore: 0,
   };
 
   isInsectOnSnake(snakeCoords, row, col) {
@@ -50,6 +52,9 @@ class Board extends Component {
   moveSnake() {
     const snakeCo = [...this.state.snakeCoordinates];
     const griddy = [...this.state.grid];
+    let highScore = this.state.highScore;
+    let x, y;
+    let randomRow, randomCol;
 
     // var s = "";
     // for (let i = 0; i < snakeCo.length; i++) {
@@ -61,15 +66,17 @@ class Board extends Component {
       griddy[snakeCo[i][0]][snakeCo[i][1]] = "";
     }
 
-    let x, y;
     x = snakeCo[snakeCo.length - 1][0];
     y = snakeCo[snakeCo.length - 1][1];
-    snakeCo.shift();
+    const [old_coord_x, old_coord_y] = snakeCo.shift();
+
     // console.log("x is ", x, " y is ", y);
     if (this.state.direction === RIGHT) {
-      snakeCo.push([x, (y + 1) % COLS]);
+      y += 1;
+      snakeCo.push([x, y % COLS]);
     } else if (this.state.direction === DOWN) {
-      snakeCo.push([(x + 1) % ROWS, y]);
+      x += 1;
+      snakeCo.push([x % ROWS, y]);
     } else if (this.state.direction === LEFT) {
       y -= 1;
       y = y < 0 ? y + COLS : y;
@@ -79,15 +86,39 @@ class Board extends Component {
       x = x < 0 ? x + ROWS : x;
       snakeCo.push([x % ROWS, y]);
     }
+    //console.log("x is ", x, " y is ", y);
+
+    // Check is insect is about to be eaten
+    // If yes then generate a new insect
+    // Also, buggy code below, not sure why modulo ROWS is done,
+    // but it solves the issue, investigate later
+    if (griddy[x % ROWS][y] === INSECT) {
+      [randomRow, randomCol] = this.generateInsect(griddy, snakeCo);
+      snakeCo.unshift([old_coord_x, old_coord_y]);
+      highScore += 1;
+      console.log("High score is: ", this.state.highScore);
+
+      // document.removeEventListener("keydown", this.changeDirection, false);
+      // document.addEventListener("keydown", this.changeDirection, false);
+      // this.interval = setInterval(() => this.moveSnake(), MOVE_TIME_INTERVAL);
+    } else if (isSnakeHeadOnBody(snakeCo)) {
+      alert(`Game Over! Your score was: ${this.state.highScore}`);
+      window.location.reload();
+    }
 
     for (let i = 0; i < snakeCo.length; i++)
       griddy[snakeCo[i][0]][snakeCo[i][1]] = "S";
-    this.setState({ grid: griddy, snakeCoordinates: snakeCo });
+
+    this.setState({
+      grid: griddy,
+      snakeCoordinates: snakeCo,
+      insectRow: randomRow,
+      insectCol: randomCol,
+      highScore: highScore,
+    });
   }
 
   componentDidMount() {
-    console.log("entering didMount");
-
     // Get default grid
     const grid = getGrid();
 
@@ -100,14 +131,7 @@ class Board extends Component {
       snakeCoordinates.push([SNAKES_TAIL_X, SNAKES_TAIL_Y + i]);
     }
 
-    // Set the default random coordinates for the insect
-    let [randomRow, randomCol] = getRandomRowCol();
-
-    //Ensure insect is not sitting on the snake
-    while (this.isInsectOnSnake(snakeCoordinates, randomRow, randomCol)) {
-      [randomRow, randomCol] = getRandomRowCol();
-    }
-    grid[randomRow][randomCol] = INSECT;
+    const [randomRow, randomCol] = this.generateInsect(grid, snakeCoordinates);
 
     // Finally set the state
     this.setState({
@@ -120,12 +144,23 @@ class Board extends Component {
     document.addEventListener("keydown", this.changeDirection, false);
 
     this.interval = setInterval(() => this.moveSnake(), MOVE_TIME_INTERVAL);
-    console.log("exiting didMount");
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     document.removeEventListener("keydown", this.changeDirection, false);
+  }
+
+  generateInsect(grid, snakeCoordinates) {
+    // Set the default random coordinates for the insect
+    let [randomRow, randomCol] = getRandomRowCol();
+
+    //Ensure insect is not sitting on the snake
+    while (this.isInsectOnSnake(snakeCoordinates, randomRow, randomCol)) {
+      [randomRow, randomCol] = getRandomRowCol();
+    }
+    grid[randomRow][randomCol] = INSECT;
+    return [randomRow, randomCol];
   }
 
   render() {
@@ -138,7 +173,6 @@ class Board extends Component {
     // console.log("render ", this.state.insectRow, " -- ", this.state.insectCol);
     return (
       <div className="grid">
-        <button onKeyDown={this.changeDirection}>Press Me</button>
         {grid.map((row, rowIdx) => {
           return (
             <div key={rowIdx}>
@@ -147,14 +181,13 @@ class Board extends Component {
                   <Square
                     key={`${rowIdx} ${colIdx}`}
                     value={grid[rowIdx][colIdx]}
-                    // onkeypress={this.changeDirection}
-                    // tabIndex="0"
                   ></Square>
                 );
               })}
             </div>
           );
         })}
+        <div>HIGH SCORE: {this.state.highScore}</div>
       </div>
     );
   }

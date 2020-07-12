@@ -16,3 +16,15 @@ export const getGrid = () => {
   }
   return grid;
 };
+
+export const isSnakeHeadOnBody = (snakeCoordinates) => {
+  const snakeLength = snakeCoordinates.length;
+  const head_x = snakeCoordinates[snakeLength - 1][0];
+  const head_y = snakeCoordinates[snakeLength - 1][1];
+
+  for (let i = 0; i < snakeLength - 1; i++) {
+    if (head_x === snakeCoordinates[i][0] && head_y === snakeCoordinates[i][1])
+      return true;
+  }
+  return false;
+};
