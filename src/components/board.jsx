@@ -19,6 +19,7 @@ class Board extends Component {
     direction: RIGHT,
     snake_length: SNAKE_LENGTH,
     highScore: 0,
+    maxSpeed: false,
   };
 
   isInsectOnSnake(snakeCoords, row, col) {
@@ -66,6 +67,7 @@ class Board extends Component {
     let highScore = this.state.highScore;
     let x, y;
     let randomRow, randomCol;
+    let maxSpeed = this.state.maxSpeed;
 
     // To allow the snake to move, remove the presence of the snake from
     // old squares.
@@ -105,8 +107,22 @@ class Board extends Component {
       [randomRow, randomCol] = this.generateInsect(griddy, snakeCo);
       snakeCo.unshift([old_coord_x, old_coord_y]);
       highScore += 1;
+
+      // Speed Control logic here
+      if (highScore % 3 === 0) {
+        clearInterval(this.interval);
+        let newTimeInterval = MOVE_TIME_INTERVAL - 10 * highScore - 2;
+
+        if (newTimeInterval < 40) {
+          newTimeInterval = 40;
+          maxSpeed = true;
+        }
+
+        this.interval = setInterval(() => this.moveSnake(), newTimeInterval);
+      }
     } else if (isSnakeHeadOnBody(snakeCo)) {
       alert(`Game Over! Your score was: ${this.state.highScore}`);
+      document.removeEventListener("keydown", this.changeDirection, false);
       window.location.reload();
     }
 
@@ -120,6 +136,7 @@ class Board extends Component {
       insectRow: randomRow,
       insectCol: randomCol,
       highScore: highScore,
+      maxSpeed: maxSpeed,
     });
   }
 
@@ -203,6 +220,7 @@ class Board extends Component {
           );
         })}
         <h3>{this.state.highScore}</h3>
+        {this.state.maxSpeed ? <p>You've reached maximum speed!</p> : null}
       </div>
     );
   }
