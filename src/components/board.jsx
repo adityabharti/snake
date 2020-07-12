@@ -4,7 +4,7 @@ import Square from "./square";
 import { getRandomRowCol, getGrid } from "./util";
 import { cst, snakes_tail, arrowKey } from "./consts";
 
-const { ROWS, COLS, INSECT, DEFAULT_SNAKE_LENGTH, MOVE_TIME_INTERVAL } = cst;
+const { ROWS, COLS, INSECT, SNAKE_LENGTH, MOVE_TIME_INTERVAL } = cst;
 const { LEFT, UP, RIGHT, DOWN } = arrowKey;
 const SNAKES_TAIL_X = snakes_tail.x;
 const SNAKES_TAIL_Y = snakes_tail.y;
@@ -15,7 +15,8 @@ class Board extends Component {
     insectRow: 0,
     insectCol: 0,
     snakeCoordinates: [],
-    default_direction: RIGHT,
+    prev_direction: RIGHT,
+    direction: RIGHT,
   };
 
   isInsectOnSnake(snakeCoords, row, col) {
@@ -28,30 +29,59 @@ class Board extends Component {
   }
 
   changeDirection = (event) => {
-    let default_direction = null;
-    if (event.keyCode === UP) default_direction = UP;
-    else if (event.keyCode === LEFT) default_direction = LEFT;
-    else if (event.keyCode === DOWN) default_direction = DOWN;
-    else if (event.keyCode === RIGHT) default_direction = RIGHT;
+    let prev_direction = this.state.direction;
+    let direction = null;
 
-    if (default_direction)
-      this.setState({ default_direction: default_direction });
+    if (event.keyCode === UP) direction = UP;
+    else if (event.keyCode === LEFT) direction = LEFT;
+    else if (event.keyCode === DOWN) direction = DOWN;
+    else if (event.keyCode === RIGHT) direction = RIGHT;
+
+    if (
+      ((prev_direction === RIGHT || prev_direction === LEFT) &&
+        (direction === UP || direction === DOWN)) ||
+      ((prev_direction === UP || prev_direction === DOWN) &&
+        (direction === LEFT || direction === RIGHT))
+    ) {
+      this.setState({ prev_direction: prev_direction, direction: direction });
+    }
   };
 
   moveSnake() {
     const snakeCo = [...this.state.snakeCoordinates];
     const griddy = [...this.state.grid];
 
+    // var s = "";
+    // for (let i = 0; i < snakeCo.length; i++) {
+    //   s += snakeCo[i][0] + "-" + snakeCo[i][1] + "  ";
+    // }
+    // console.log(s);
+
     for (let i = 0; i < snakeCo.length; i++) {
       griddy[snakeCo[i][0]][snakeCo[i][1]] = "";
     }
 
-    for (let i = 0; i < snakeCo.length; i++) {
-      if (snakeCo[i][1] < COLS - 1) snakeCo[i][1] += 1;
-      else snakeCo[i][1] = 0;
-      griddy[snakeCo[i][0]][snakeCo[i][1]] = "S";
+    let x, y;
+    x = snakeCo[snakeCo.length - 1][0];
+    y = snakeCo[snakeCo.length - 1][1];
+    snakeCo.shift();
+    // console.log("x is ", x, " y is ", y);
+    if (this.state.direction === RIGHT) {
+      snakeCo.push([x, (y + 1) % COLS]);
+    } else if (this.state.direction === DOWN) {
+      snakeCo.push([(x + 1) % ROWS, y]);
+    } else if (this.state.direction === LEFT) {
+      y -= 1;
+      y = y < 0 ? y + COLS : y;
+      snakeCo.push([x, y % COLS]);
+    } else if (this.state.direction === UP) {
+      x -= 1;
+      x = x < 0 ? x + ROWS : x;
+      snakeCo.push([x % ROWS, y]);
     }
 
+    for (let i = 0; i < snakeCo.length; i++)
+      griddy[snakeCo[i][0]][snakeCo[i][1]] = "S";
     this.setState({ grid: griddy, snakeCoordinates: snakeCo });
   }
 
@@ -65,7 +95,7 @@ class Board extends Component {
     // snake tail at 3, 3
     const snakeCoordinates = [];
 
-    for (let i = 0; i < DEFAULT_SNAKE_LENGTH; i++) {
+    for (let i = 0; i < SNAKE_LENGTH; i++) {
       grid[SNAKES_TAIL_X][SNAKES_TAIL_Y + i] = "S";
       snakeCoordinates.push([SNAKES_TAIL_X, SNAKES_TAIL_Y + i]);
     }
