@@ -122,7 +122,7 @@ class Board extends Component {
       }
     } else if (isSnakeHeadOnBody(snakeCo)) {
       alert(`Game Over! Your score was: ${this.state.highScore}`);
-      document.removeEventListener("keydown", this.changeDirection, false);
+      clearInterval(this.interval);
       window.location.reload();
     }
 
