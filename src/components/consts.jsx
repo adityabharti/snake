@@ -1,6 +1,6 @@
 export const cst = {
-  ROWS: 20,
-  COLS: 22,
+  ROWS: 22,
+  COLS: 30,
   INSECT: "I",
   SNAKE_LENGTH: 4,
   SNAKES_TAIL_X: 3,

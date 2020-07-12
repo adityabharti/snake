@@ -1,9 +1,11 @@
 .square {
   height: 25px;
   width: 25px;
-  background-color: #d7f8e4;
+  background-color: #c1f085;
   border-style: solid;
-  border-width: 0.1px;
+  border-width: 0px;
+  margin: 0px;
+  margin-top: -4px;
   display: inline-block;
 }
 

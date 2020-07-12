@@ -187,7 +187,7 @@ class Board extends Component {
             </div>
           );
         })}
-        <div>HIGH SCORE: {this.state.highScore}</div>
+        <h3>{this.state.highScore}</h3>
       </div>
     );
   }

@@ -1,3 +1,5 @@
 .grid {
   text-align: center;
+  padding: 2%;
+  flex-direction: row;
 }
