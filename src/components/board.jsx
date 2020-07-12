@@ -27,14 +27,16 @@ class Board extends Component {
     return false;
   }
 
-  // changeDirection(event) {
-  //   console.log("key pressed is ", event.keyCode);
+  changeDirection = (event) => {
+    let default_direction = null;
+    if (event.keyCode === UP) default_direction = UP;
+    else if (event.keyCode === LEFT) default_direction = LEFT;
+    else if (event.keyCode === DOWN) default_direction = DOWN;
+    else if (event.keyCode === RIGHT) default_direction = RIGHT;
 
-  //   if (event.keyCode === UP) console.log("Pressed UP");
-  //   else if (event.keyCode === LEFT) console.log("Pressed LEFT");
-  //   else if (event.keyCode === DOWN) console.log("Pressed DOWN");
-  //   else if (event.keyCode === RIGHT) console.log("Pressed RIGHT");
-  // }
+    if (default_direction)
+      this.setState({ default_direction: default_direction });
+  };
 
   moveSnake() {
     const snakeCo = [...this.state.snakeCoordinates];
@@ -85,12 +87,15 @@ class Board extends Component {
       snakeCoordinates: snakeCoordinates,
     });
 
+    document.addEventListener("keydown", this.changeDirection, false);
+
     this.interval = setInterval(() => this.moveSnake(), MOVE_TIME_INTERVAL);
     console.log("exiting didMount");
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    document.removeEventListener("keydown", this.changeDirection, false);
   }
 
   render() {
@@ -103,6 +108,7 @@ class Board extends Component {
     // console.log("render ", this.state.insectRow, " -- ", this.state.insectCol);
     return (
       <div className="grid">
+        <button onKeyDown={this.changeDirection}>Press Me</button>
         {grid.map((row, rowIdx) => {
           return (
             <div key={rowIdx}>
