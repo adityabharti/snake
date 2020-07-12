@@ -121,8 +121,9 @@ class Board extends Component {
         this.interval = setInterval(() => this.moveSnake(), newTimeInterval);
       }
     } else if (isSnakeHeadOnBody(snakeCo)) {
-      alert(`Game Over! Your score was: ${this.state.highScore}`);
       clearInterval(this.interval);
+      alert(`Game Over! Your score was: ${this.state.highScore}`);
+
       window.location.reload();
     }
 
