@@ -1,5 +1,7 @@
 Snake game built using React JS
 
+Link to play the game: https://adityabharti.github.io/snake/
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
